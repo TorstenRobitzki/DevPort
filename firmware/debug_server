@@ -1,0 +1,1 @@
+JLinkGDBServer -device ATSAMD51J19 -if SWD
