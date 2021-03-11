@@ -4,7 +4,6 @@
 #include <sam.h>
 
 #include <cstdint>
-#include <atomic>
 
 class async_i2c_interrupt_handler
 {
@@ -34,7 +33,7 @@ private:
     virtual void read_interrupt(SercomI2cm* i2c)  final;
     virtual void error_interrupt(SercomI2cm* i2c) final;
 
-    std::atomic< event > current_event_;
+    volatile event current_event_;
 
     volatile const std::uint8_t* write_data_;
     volatile std::size_t         write_size_;

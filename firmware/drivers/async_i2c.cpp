@@ -48,6 +48,7 @@ namespace {
 
         return SERCOM0_0_IRQn + static_cast< int >( std::distance( std::cbegin( interface_instances ), &i ) * num_interrupts_per_instance );
     }
+
 }
 
 #define CONF_GCLK_SERCOM5_CORE_FREQUENCY 12000000
@@ -123,6 +124,9 @@ static constexpr auto i2c_read_flag    = 0x1;
 
 void async_i2c_base::write_read_impl( SercomI2cm* i2c, std::uint8_t device_address, const std::uint8_t* write_data, std::size_t write_size, std::uint8_t* read_data, std::size_t read_size )
 {
+toggle();
+toggle();
+toggle();
     assert( write_size + read_size != 0 );
     assert( write_size == 0 || write_data != nullptr );
     assert( read_size == 0 || read_data != nullptr );
@@ -153,12 +157,6 @@ static void issue_stop( SercomI2cm* i2c )
     i2c->CTRLB.reg = ( i2c->CTRLB.reg & ~( SERCOM_I2CM_CTRLB_CMD_Msk ) ) | SERCOM_I2CM_CTRLB_CMD( i2c_stop_command );
 }
 
-static void toggle()
-{
-    gpio_set_pin_level( GPIO( GPIO_PORTA, 16 ), true );
-    gpio_set_pin_level( GPIO( GPIO_PORTA, 16 ), false );
-}
-
 void async_i2c_base::write_interrupt( SercomI2cm* i2c )
 {
     toggle();
@@ -182,6 +180,7 @@ void async_i2c_base::write_interrupt( SercomI2cm* i2c )
     else
     {
         issue_stop( i2c );
+        current_event_ = event::write_read_done;
     }
 }
 
@@ -193,11 +192,18 @@ void async_i2c_base::read_interrupt(SercomI2cm* i2c)
     assert( read_size_ );
 
     if ( read_size_ == 1 )
+    {
         issue_stop( i2c );
+    }
 
    *read_data_ = static_cast< std::uint8_t >( i2c->DATA.reg & 0xff );
     --read_size_;
     ++read_data_;
+
+    if ( read_size_ == 0 )
+    {
+        current_event_ = event::write_read_done;
+    }
 }
 
 void async_i2c_base::error_interrupt(SercomI2cm* i2c)
