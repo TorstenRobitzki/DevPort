@@ -1,0 +1,9 @@
+(sym_lib_table
+  (lib (name switches)(type Legacy)(uri /Users/todi/DevPort/hardware/components/switches.lib)(options "")(descr ""))
+  (lib (name io)(type Legacy)(uri /Users/todi/DevPort/hardware/components/io.lib)(options "")(descr ""))
+  (lib (name base-plane-rescue)(type Legacy)(uri /Users/todi/DevPort/hardware/base-plane/base-plane-rescue.lib)(options "")(descr ""))
+  (lib (name usb_connectors)(type Legacy)(uri /Users/todi/DevPort/hardware/components/usb_connectors.lib)(options "")(descr ""))
+  (lib (name TUSB8041RGCR)(type Legacy)(uri /Users/todi/DevPort/hardware/components/TUSB8041RGCR/TUSB8041RGCR.lib)(options "")(descr ""))
+  (lib (name eec)(type Legacy)(uri /Users/todi/DevPort/hardware/components/Diode_Wurth%20Electronics%20Inc_8240116/eec.lib)(options "")(descr ""))
+  (lib (name 2021-02-24_16-56-59)(type Legacy)(uri /Users/todi/DevPort/hardware/components/ul_TPD4EUSB30DQAR/KiCAD/2021-02-24_16-56-59/2021-02-24_16-56-59.lib)(options "")(descr ""))
+)

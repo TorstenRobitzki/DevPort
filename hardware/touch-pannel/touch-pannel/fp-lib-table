@@ -1,0 +1,4 @@
+(fp_lib_table
+  (lib (name components)(type KiCad)(uri /Users/todi/DevPort/hardware/components)(options "")(descr ""))
+  (lib (name Torrox)(type KiCad)(uri /Users/todi/DevPort/hardware/components/Torrox.pretty)(options "")(descr ""))
+)

@@ -1,0 +1,12 @@
+(fp_lib_table
+  (lib (name leds_and_switches)(type KiCad)(uri /Users/todi/DevPort/hardware/components/leds_and_switches.pretty)(options "")(descr ""))
+  (lib (name TUSB8041RGCR)(type KiCad)(uri /Users/todi/DevPort/hardware/components/TUSB8041RGCR)(options "")(descr ""))
+  (lib (name usb_connectors)(type KiCad)(uri /Users/todi/DevPort/hardware/components/usb_connectors.pretty)(options "")(descr ""))
+  (lib (name footprints)(type KiCad)(uri /Users/todi/DevPort/hardware/components/ul_TPS74601PBQWDRVRQ1/footprints.pretty)(options "")(descr ""))
+  (lib (name FTSH-105-XX-X-DV)(type KiCad)(uri /Users/todi/DevPort/hardware/components/FTSH-105-XX-X-DV)(options "")(descr ""))
+  (lib (name FTSH-110-X-X-DV)(type KiCad)(uri /Users/todi/DevPort/hardware/components/FTSH-110-X-X-DV)(options "")(descr ""))
+  (lib (name Power_Management)(type KiCad)(uri /Users/todi/DevPort/hardware/components/Power_Management)(options "")(descr ""))
+  (lib (name components)(type KiCad)(uri /Users/todi/DevPort/hardware/components)(options "")(descr ""))
+  (lib (name eec)(type KiCad)(uri /Users/todi/DevPort/hardware/components/Trans_On_Semiconductor_MCH3478-TL-H/eec.pretty)(options "")(descr ""))
+  (lib (name Torrox)(type KiCad)(uri /Users/todi/DevPort/hardware/components/Torrox.pretty)(options "")(descr ""))
+)

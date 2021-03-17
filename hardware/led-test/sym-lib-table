@@ -1,0 +1,5 @@
+(sym_lib_table
+  (lib (name io)(type Legacy)(uri /Users/todi/DevPort/hardware/components/io.lib)(options "")(descr ""))
+  (lib (name switches)(type Legacy)(uri /Users/todi/DevPort/hardware/components/switches.lib)(options "")(descr ""))
+  (lib (name led-test-rescue)(type Legacy)(uri ${KIPRJMOD}/led-test-rescue.lib)(options "")(descr ""))
+)
