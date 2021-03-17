@@ -1,0 +1,233 @@
+#include "port_hubs.hpp"
+
+#include <algorithm>
+#include <iterator>
+#include <cassert>
+#include <cmath>
+
+template < template < class > class I2C0, template < class > class Timer >
+port_hubs< I2C0, Timer >::port_hubs()
+    : Timer< port_hubs >( 25 )
+{
+    for ( auto& state : led_states_ )
+    {
+        state.pattern       = port_blink_pattern::off;
+        state.pattern_state = 0;
+        state.needs_update  = false;
+    }
+}
+
+template < template < class > class I2C0, template < class > class Timer >
+void port_hubs< I2C0, Timer >::on_i2c_write_read_done()
+{
+    next_step();
+}
+
+template < template < class > class I2C0, template < class > class Timer >
+void port_hubs< I2C0, Timer >::on_i2c_error_occurred()
+{
+    assert( false );
+}
+
+static const std::size_t blink_pattern_size = 0xfff;
+
+template < template < class > class I2C0, template < class > class Timer >
+void port_hubs< I2C0, Timer >::on_timeout()
+{
+    for ( auto& state : led_states_ )
+    {
+        if ( state.pattern == port_blink_pattern::blink )
+        {
+            state.pattern_state = ( state.pattern_state + 1 ) % blink_pattern_size;
+            state.needs_update  = state.needs_update | requires_brightness_update;
+        }
+    }
+
+    if ( state_ == state::idle )
+        next_port_update();
+}
+
+template < template < class > class I2C0, template < class > class Timer >
+bool port_hubs< I2C0, Timer >::handle_events()
+{
+    if ( !init_ )
+    {
+        init_ = true;
+        next_step();
+    }
+
+    return I2C0< port_hubs >::handle_events()
+        || Timer< port_hubs >::handle_events();
+}
+
+namespace {
+
+static constexpr auto color_r_bitpos = 0;
+static constexpr auto color_g_bitpos = 8;
+static constexpr auto color_b_bitpos = 16;
+static constexpr std::uint32_t color_mask = 0xff;
+
+static const std::uint32_t color_palette[] =
+{
+    0x0000ff,
+    0x00ff00,
+    0xff0000,
+    0xffffff
+};
+
+} // namespace
+
+template < template < class > class I2C0, template < class > class Timer >
+void port_hubs< I2C0, Timer >::port_led( int port_id, port_color color, port_blink_pattern pattern )
+{
+    const std::size_t color_index = static_cast< int >( color );
+    assert( color_index < std::size( color_palette ) );
+
+    const std::size_t port_index = port_id * num_led_per_port;
+    assert( port_index < std::size( led_states_ ) );
+
+    for ( int idx = 0; idx != num_led_per_port; ++idx )
+    {
+        port_led_state& state = led_states_[ port_index + idx ];
+        state.color         = color_palette[ color_index ];
+        state.pattern       = pattern;
+        state.needs_update  = requires_updates;
+    }
+}
+
+static constexpr std::uint8_t driver0_addr = 0x14;
+static constexpr std::uint8_t driver1_addr = 0x15;
+static constexpr std::size_t  number_of_leds_per_driver = 4;
+
+static std::uint8_t register_write[ 2 ];
+
+static const std::uint8_t brightness_init[ number_of_leds_per_driver + 1 ] = {
+    0x07,
+    0x00, 0x00, 0x00, 0x00
+};
+
+template < template < class > class I2C0, template < class > class Timer >
+void port_hubs< I2C0, Timer >::next_step()
+{
+    switch ( state_ )
+    {
+        case state::init_brightness1:
+            i2c().write_read( driver0_addr, &brightness_init[ 0 ], std::size( brightness_init ), nullptr, 0 );
+            state_ = state::init_brightness2;
+            break;
+
+        case state::init_brightness2:
+            i2c().write_read( driver1_addr, &brightness_init[ 0 ], std::size( brightness_init ), nullptr, 0 );
+            state_ = state::enable_leds1;
+            break;
+
+        case state::enable_leds1:
+            register_write[ 0 ] = 0x00;
+            register_write[ 1 ] = 0x40;
+
+            i2c().write_read( driver0_addr, &register_write[ 0 ], std::size( register_write ), nullptr, 0 );
+
+            state_ = state::enable_leds2;
+            break;
+
+        case state::enable_leds2:
+            register_write[ 0 ] = 0x00;
+            register_write[ 1 ] = 0x40;
+
+            i2c().write_read( driver1_addr, &register_write[ 0 ], std::size( register_write ), nullptr, 0 );
+
+            state_ = state::idle;
+            break;
+
+        case state::updateing:
+            state_ = state::idle;
+
+            next_port_update();
+
+            break;
+
+        case state::idle:
+            break;
+    }
+}
+
+static std::uint8_t calc_brightness( port_blink_pattern pattern, std::uint32_t state )
+{
+    switch ( pattern )
+    {
+    case port_blink_pattern::off:
+        return 0;
+
+    case port_blink_pattern::solid:
+        return 0x20;
+
+    case port_blink_pattern::blink:
+        return ( std::sin( ( state & 63 ) / 63.0 * M_PI ) ) * 0x40;
+    }
+
+    assert( false );
+}
+
+template < template < class > class I2C0, template < class > class Timer >
+void port_hubs< I2C0, Timer >::next_port_update()
+{
+    assert( state_ == state::idle );
+
+    const auto pos = std::find_if( std::begin( led_states_ ), std::end( led_states_ ), []( const auto& state ){
+        return state.needs_update != 0;
+    } );
+
+    if ( pos == std::end( led_states_ ) )
+        return;
+
+    state_ = state::updateing;
+
+    const int led_idx = std::distance( std::begin( led_states_ ), pos );
+
+    if ( pos->needs_update & requires_color_update )
+    {
+        pos->needs_update = pos->needs_update & ~requires_color_update;
+        color_update( led_idx, pos->color );
+    }
+    else if ( pos->needs_update & requires_brightness_update )
+    {
+        pos->needs_update = pos->needs_update & ~requires_brightness_update;
+        brightness_update( led_idx, calc_brightness( pos->pattern, pos->pattern_state ) );
+    }
+}
+
+template < template < class > class I2C0, template < class > class Timer >
+void port_hubs< I2C0, Timer >::color_update( int led_idx, std::uint32_t color )
+{
+    const std::uint8_t driver_id = led_idx / number_of_leds_per_driver;
+    const std::uint8_t led_id    = led_idx % number_of_leds_per_driver;
+
+    static std::uint8_t buffer[ 4 ];
+    buffer[ 0 ] = static_cast< std::uint8_t >( 3 * led_id + 0x0b );
+    buffer[ 1 ] = static_cast< std::uint8_t >( ( color >> color_r_bitpos ) & color_mask );
+    buffer[ 2 ] = static_cast< std::uint8_t >( ( color >> color_g_bitpos ) & color_mask );
+    buffer[ 3 ] = static_cast< std::uint8_t >( ( color >> color_b_bitpos ) & color_mask );
+
+    i2c().write_read( driver0_addr + driver_id, &buffer[ 0 ], std::size( buffer ), nullptr, 0 );
+}
+
+template < template < class > class I2C0, template < class > class Timer >
+void port_hubs< I2C0, Timer >::brightness_update( int led_idx, std::uint8_t brightness )
+{
+    const std::uint8_t driver_id = led_idx / number_of_leds_per_driver;
+    const std::uint8_t led_id    = led_idx % number_of_leds_per_driver;
+
+    static std::uint8_t buffer[ 2 ];
+
+    buffer[ 0 ] = static_cast< std::uint8_t >( led_id + 0x07 );
+    buffer[ 1 ] = brightness;
+
+    i2c().write_read( driver0_addr + driver_id, &buffer[ 0 ], std::size( buffer ), nullptr, 0 );
+}
+
+template < template < class > class I2C0, template < class > class Timer >
+I2C0< port_hubs< I2C0, Timer > >& port_hubs< I2C0, Timer >::i2c()
+{
+    return *this;
+}
+

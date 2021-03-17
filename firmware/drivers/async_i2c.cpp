@@ -48,7 +48,6 @@ namespace {
 
         return SERCOM0_0_IRQn + static_cast< int >( std::distance( std::cbegin( interface_instances ), &i ) * num_interrupts_per_instance );
     }
-
 }
 
 #define CONF_GCLK_SERCOM5_CORE_FREQUENCY 12000000
@@ -88,6 +87,8 @@ static void enable_irq( int id )
 
 async_i2c_base::async_i2c_base( SercomI2cm* i2c )
     : current_event_( event::none )
+    , write_size_( 0 )
+    , read_size_( 0 )
 {
     static constexpr auto i2c_master_mode    = 0x5;
     static constexpr auto i2c_bus_state_idle = 0x01;
@@ -124,12 +125,11 @@ static constexpr auto i2c_read_flag    = 0x1;
 
 void async_i2c_base::write_read_impl( SercomI2cm* i2c, std::uint8_t device_address, const std::uint8_t* write_data, std::size_t write_size, std::uint8_t* read_data, std::size_t read_size )
 {
-toggle();
-toggle();
-toggle();
     assert( write_size + read_size != 0 );
     assert( write_size == 0 || write_data != nullptr );
     assert( read_size == 0 || read_data != nullptr );
+    assert( write_size_ == 0 );
+    assert( read_size_ == 0 );
 
     write_data_ = write_data;
     write_size_ = write_size;
@@ -159,8 +159,6 @@ static void issue_stop( SercomI2cm* i2c )
 
 void async_i2c_base::write_interrupt( SercomI2cm* i2c )
 {
-    toggle();
-
     if ( write_size_ )
     {
         wait_for_sysop_synchronization( i2c );
@@ -186,9 +184,6 @@ void async_i2c_base::write_interrupt( SercomI2cm* i2c )
 
 void async_i2c_base::read_interrupt(SercomI2cm* i2c)
 {
-    toggle();
-    toggle();
-
     assert( read_size_ );
 
     if ( read_size_ == 1 )

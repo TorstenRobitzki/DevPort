@@ -1,5 +1,6 @@
 add_library(drivers STATIC
-    async_i2c.cpp)
+    async_i2c.cpp
+    timer.cpp)
 
 target_sources(drivers
     PRIVATE

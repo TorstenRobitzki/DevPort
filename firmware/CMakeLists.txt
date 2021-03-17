@@ -19,7 +19,7 @@ set(ARM_FLAGS "${ARM_FLAGS} -ffunction-sections -fdata-sections")
 set(CXX_ARC_FLAGS "${ARM_FLAGS} -mfloat-abi=hard -mfpu=fpv4-sp-d16")
 set(LINK_ARC_FLAGS "${ARM_FLAGS} --specs=nosys.specs  -static -lstdc++ -lsupc++ ")
 
-set(CXX_SPECIFIC_FLAGS "${CXX_SPECIFIC_FLAGS} -ftemplate-backtrace-limit=0 -fvisibility-inlines-hidden -fno-rtti -fno-exceptions")
+set(CXX_SPECIFIC_FLAGS "${CXX_SPECIFIC_FLAGS} -ftemplate-backtrace-limit=0 -fvisibility-inlines-hidden -fno-rtti -fno-exceptions -fno-threadsafe-statics")
 set(LINK_DEFAULT_FLAGS "${LINK_DEFAULT_FLAGS} -Wl,--gc-sections -nostartfiles -Wl,--entry -Wl,exception_table ")
 
 set(CXX_BUILD_TYPE_FLAGS "-g")

@@ -53,8 +53,17 @@ public:
 
     bool handle_events();
 
+    async_i2c( const async_i2c& ) = delete;
+    async_i2c& operator=( const async_i2c& ) = delete;
+
 private:
     static SercomI2cm* instance();
+};
+
+template < std::uint32_t InterfaceBaseAddr >
+struct async_i2c_instance {
+    template < class CallBacks >
+    using type = async_i2c< CallBacks, InterfaceBaseAddr >;
 };
 
 template < class CallBacks, std::uint32_t InterfaceBaseAddr >
