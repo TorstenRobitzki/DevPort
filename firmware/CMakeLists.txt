@@ -40,7 +40,6 @@ set(CMAKE_EXE_LINKER_FLAGS "${LINK_DEFAULT_FLAGS} ${LINK_ARC_FLAGS} ${LINK_BUILD
 set(ASF_ROOT ${CMAKE_CURRENT_LIST_DIR}/../asf)
 
 add_library(startup_file STATIC
-    ${ASF_ROOT}/samd51a/gcc/system_samd51.c
     runtime.cpp)
 
 target_compile_definitions(startup_file
@@ -54,6 +53,9 @@ target_include_directories(startup_file
 )
 
 add_executable(firmware.elf main.cpp)
+target_link_libraries(firmware.elf PRIVATE startup_file drivers)
+additional_targets(firmware)
+
 add_executable(led_test.elf led_test.cpp)
 
 target_link_libraries(led_test.elf PRIVATE startup_file drivers)
