@@ -2,8 +2,10 @@
 #include <hal_gpio.h>
 #include <hal_init.h>
 
+#include "temperature.hpp"
 
 #include "drivers/layout.hpp"
+#include "drivers/async_i2c.hpp"
 
 #define CONF_XOSC0_FREQUENCY 12000000
 #define CONF_XOSC0_XTALEN 1
@@ -73,24 +75,38 @@ static void setup_main_clock()
       | GCLK_GENCTRL_GENEN );
 }
 
+static void setup_sercom1()
+{
+    gpio_set_pin_function( GPIO( GPIO_PORTA, 0 ), PINMUX_PA00D_SERCOM1_PAD0 );
+    gpio_set_pin_function( GPIO( GPIO_PORTA, 1 ), PINMUX_PA01D_SERCOM1_PAD1 );
+
+    hri_gclk_write_PCHCTRL_reg(GCLK, SERCOM1_GCLK_ID_CORE, GCLK_PCHCTRL_GEN_GCLK0_Val | (1 << GCLK_PCHCTRL_CHEN_Pos));
+//    hri_gclk_write_PCHCTRL_reg(GCLK, SERCOM1_GCLK_ID_SLOW, GCLK_PCHCTRL_GEN_GCLK3_Val | (1 << GCLK_PCHCTRL_CHEN_Pos));
+
+    hri_mclk_set_APBAMASK_SERCOM1_bit(MCLK);
+}
+
+
 extern "C" void main_entry()
 {
     init_mcu();
     setup_main_clock();
+    setup_sercom1();
+
+    temperature< i2c_sercom1 > temp_sensor;
 
     gpio_set_pin_direction( test0_pin, GPIO_DIRECTION_OUT );
-
     gpio_set_pin_level( test0_pin, false );
 
+    temp_sensor.start_read_temperature();
     for ( ;; )
     {
-    gpio_set_pin_level( test0_pin, false );
+        __WFI();
+        temp_sensor.handle_events();
 
-        for ( volatile int i = 0; i != 600000; ++i )
-            ;
-    gpio_set_pin_level( test0_pin, true );
-
-        for ( volatile int i = 0; i != 600000; ++i )
-            ;
+        if ( temp_sensor.new_temperature().has_value() )
+        {
+            temp_sensor.start_read_temperature();
+        }
     }
 }

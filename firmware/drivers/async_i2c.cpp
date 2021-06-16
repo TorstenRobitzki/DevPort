@@ -95,8 +95,8 @@ async_i2c_base::async_i2c_base( SercomI2cm* i2c )
 
     wait_for_enable_synchronization( i2c );
 
-    // TODO
-    i2c->BAUD.reg   = SERCOM_I2CM_BAUD_BAUD(0x35) | SERCOM_I2CM_BAUD_BAUD(0x36);
+    // TODO 53
+    i2c->BAUD.reg   = SERCOM_I2CM_BAUD_BAUD(0x80);
     i2c->CTRLB.reg  = ( i2c->CTRLB.reg | SERCOM_I2CM_CTRLB_SMEN );
     i2c->CTRLA.reg  = ( i2c->CTRLA.reg & ~SERCOM_I2CM_CTRLA_MODE_Msk )
         | SERCOM_I2CS_CTRLA_MODE( i2c_master_mode )
@@ -125,11 +125,13 @@ static constexpr auto i2c_read_flag    = 0x1;
 
 void async_i2c_base::write_read_impl( SercomI2cm* i2c, std::uint8_t device_address, const std::uint8_t* write_data, std::size_t write_size, std::uint8_t* read_data, std::size_t read_size )
 {
+    // no pending transaction
+    assert( write_size_ == 0 );
+    assert( read_size_ == 0 );
+
     assert( write_size + read_size != 0 );
     assert( write_size == 0 || write_data != nullptr );
     assert( read_size == 0 || read_data != nullptr );
-    assert( write_size_ == 0 );
-    assert( read_size_ == 0 );
 
     write_data_ = write_data;
     write_size_ = write_size;

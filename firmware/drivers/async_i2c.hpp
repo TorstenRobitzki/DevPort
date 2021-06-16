@@ -60,6 +60,27 @@ private:
     static SercomI2cm* instance();
 };
 
+
+template < class CallBacks >
+using i2c_sercom0 = async_i2c< CallBacks, 0x40003000UL >;
+
+template < class CallBacks >
+using i2c_sercom1 = async_i2c< CallBacks, 0x40003400UL >;
+
+template < class CallBacks >
+using i2c_sercom2 = async_i2c< CallBacks, 0x41012000UL >;
+
+template < class CallBacks >
+using i2c_sercom3 = async_i2c< CallBacks, 0x41014000UL >;
+
+template < class CallBacks >
+using i2c_sercom4 = async_i2c< CallBacks, 0x43000000UL >;
+
+template < class CallBacks >
+using i2c_sercom5 = async_i2c< CallBacks, 0x43000400UL >;
+
+// Implementation
+
 template < std::uint32_t InterfaceBaseAddr >
 struct async_i2c_instance {
     template < class CallBacks >

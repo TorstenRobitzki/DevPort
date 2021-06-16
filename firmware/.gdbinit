@@ -14,6 +14,6 @@ monitor flash download = 1
 monitor flash device = atsamd51j19
 monitor reset
 
-symbol /Users/todi/DevPort/firmware/build/led_test.elf
-load /Users/todi/DevPort/firmware/build/led_test.elf
+symbol /Users/todi/DevPort/firmware/build/firmware.elf
+load /Users/todi/DevPort/firmware/build/firmware.elf
 
