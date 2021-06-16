@@ -37,6 +37,7 @@
 
 static void setup_main_clock()
 {
+    // enable external oscilator
     hri_oscctrl_write_XOSCCTRL_reg(
         OSCCTRL,
         external_osc_index,
@@ -49,6 +50,27 @@ static void setup_main_clock()
 
     while ( !hri_oscctrl_get_STATUS_XOSCRDY0_bit( OSCCTRL ) )
         ;
+
+    // setup PPL to generate 120MHz
+    // predevide the input down to 3MHz to conform to the maximum frequency requirement
+    // fdiv = fosc / 2 * (div + 1) => div = fosc / 2 * fdiv - 1 = 1
+    OscctrlDpll* const pll = &OSCCTRL->Dpll[ 0 ];
+
+    hri_oscctrldpll_write_DPLLCTRLB_reg( pll,
+        OSCCTRL_DPLLCTRLB_REFCLK_XOSC0
+      | OSCCTRL_DPLLCTRLB_DIV( 1 ));
+
+    // f = fdiv * (LDR + 1 + LDRFRAC / 32) = 3MHz * ( 39 + 1 + 0 / 32 ) = 120 MHz
+    hri_oscctrldpll_write_DPLLRATIO_reg( pll,
+        OSCCTRL_DPLLRATIO_LDR( 39 )
+      | OSCCTRL_DPLLRATIO_LDRFRAC( 0 ) );
+
+    hri_oscctrldpll_set_DPLLCTRLA_ENABLE_bit( pll );
+
+    // set GCLK_MAIN to 120 MHz
+    hri_gclk_write_GENCTRL_reg( GCLK, 0,
+        GCLK_GENCTRL_SRC_DPLL0
+      | GCLK_GENCTRL_GENEN );
 }
 
 extern "C" void main_entry()
