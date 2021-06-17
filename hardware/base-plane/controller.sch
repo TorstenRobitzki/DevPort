@@ -14,17 +14,6 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L MCU_Microchip_SAMD:ATSAMD51J19A-A U4
-U 1 1 60335973
-P 5150 3600
-F 0 "U4" H 5150 1711 50  0000 C CNN
-F 1 "ATSAMD51J19A-A" H 5150 1620 50  0000 C CNN
-F 2 "Package_QFP:TQFP-64_10x10mm_P0.5mm" H 5150 3600 50  0001 C CIN
-F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/60001507E.pdf" H 5150 3600 50  0001 C CNN
-	1    5150 3600
-	1    0    0    -1  
-$EndComp
-$Comp
 L power:GND #PWR052
 U 1 1 60338077
 P 5150 5800
@@ -35,8 +24,6 @@ F 3 "" H 5150 5800 50  0001 C CNN
 	1    5150 5800
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	5150 5800 5150 5450
 Wire Wire Line
 	5150 5450 5250 5450
 Wire Wire Line
@@ -559,9 +546,9 @@ Wire Wire Line
 	3600 6700 3800 6700
 Wire Wire Line
 	3600 6800 3800 6800
-Text GLabel 7300 4400 2    50   BiDi ~ 0
+Text GLabel 2650 5000 0    50   BiDi ~ 0
 SWDIO
-Text GLabel 7300 4300 2    50   Output ~ 0
+Text GLabel 2650 4900 0    50   Output ~ 0
 SWDCLK
 Text GLabel 3800 6800 2    50   Output ~ 0
 SWDCLK
@@ -570,29 +557,25 @@ SWDIO
 $Comp
 L Device:R R19
 U 1 1 60B474E9
-P 6100 4300
-F 0 "R19" V 6250 4150 50  0000 C CNN
-F 1 "22R" V 6300 4250 50  0000 C CNN
-F 2 "Resistor_SMD:R_0603_1608Metric" V 6030 4300 50  0001 C CNN
-F 3 "~" H 6100 4300 50  0001 C CNN
-	1    6100 4300
-	0    1    1    0   
+P 3850 4900
+F 0 "R19" V 4000 4750 50  0000 C CNN
+F 1 "22R" V 4050 4850 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 3780 4900 50  0001 C CNN
+F 3 "~" H 3850 4900 50  0001 C CNN
+	1    3850 4900
+	0    -1   1    0   
 $EndComp
 $Comp
 L Device:R R20
 U 1 1 60B478FF
-P 6350 4400
-F 0 "R20" V 6550 4350 50  0000 C CNN
-F 1 "22R" V 6450 4450 50  0000 C CNN
-F 2 "Resistor_SMD:R_0603_1608Metric" V 6280 4400 50  0001 C CNN
-F 3 "~" H 6350 4400 50  0001 C CNN
-	1    6350 4400
-	0    1    1    0   
+P 3600 5000
+F 0 "R20" V 3800 4950 50  0000 C CNN
+F 1 "22R" V 3700 5050 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 3530 5000 50  0001 C CNN
+F 3 "~" H 3600 5000 50  0001 C CNN
+	1    3600 5000
+	0    -1   1    0   
 $EndComp
-Wire Wire Line
-	6200 4400 5850 4400
-Wire Wire Line
-	5950 4300 5850 4300
 Wire Wire Line
 	3600 7100 3800 7100
 Text GLabel 3800 7100 2    50   Output ~ 0
@@ -667,9 +650,9 @@ Text HLabel 4100 4500 0    50   Input ~ 0
 DISPLAY_POWER
 Text HLabel 4100 4800 0    50   Input ~ 0
 DISPLAY_BS
-Text HLabel 4100 4900 0    50   Input ~ 0
+Text HLabel 6200 4400 2    50   Input ~ 0
 DISPLAY_BUSY
-Text HLabel 4100 5000 0    50   Input ~ 0
+Text HLabel 6200 4300 2    50   Input ~ 0
 DISPLAY_RESET
 Text HLabel 6100 4100 2    50   Input ~ 0
 DISPLAY_DC
@@ -687,8 +670,6 @@ Wire Wire Line
 	6700 2600 5850 2600
 Text Label 5950 2600 0    50   ~ 0
 XY0
-Text Notes 5200 2600 0    50   ~ 0
-X21/Y21
 Entry Wire Line
 	6700 2700 6800 2800
 Entry Wire Line
@@ -697,12 +678,6 @@ Wire Wire Line
 	6700 2700 5850 2700
 Wire Wire Line
 	6700 2800 5850 2800
-Text Notes 5200 2700 0    50   ~ 0
-X22/Y22
-Text Notes 5200 2800 0    50   ~ 0
-X23/Y23
-Text Notes 5200 2900 0    50   ~ 0
-X24/Y24
 Text Notes 5200 3000 0    50   ~ 0
 X25/Y25
 Entry Wire Line
@@ -826,9 +801,9 @@ Wire Wire Line
 Wire Wire Line
 	4100 4800 4450 4800
 Wire Wire Line
-	4100 4900 4450 4900
+	6200 4400 5850 4400
 Wire Wire Line
-	4100 5000 4450 5000
+	6200 4300 5850 4300
 Text HLabel 6700 2300 2    50   BiDi ~ 0
 Touch_GPIO
 Wire Wire Line
@@ -881,7 +856,7 @@ L Device:R R17
 U 1 1 6035852A
 P 5250 6700
 F 0 "R17" H 5320 6746 50  0000 L CNN
-F 1 "R" H 5320 6655 50  0000 L CNN
+F 1 "10k" H 5320 6655 50  0000 L CNN
 F 2 "Resistor_SMD:R_0603_1608Metric" V 5180 6700 50  0001 C CNN
 F 3 "~" H 5250 6700 50  0001 C CNN
 	1    5250 6700
@@ -892,7 +867,7 @@ L Device:R R18
 U 1 1 60358BC9
 P 5500 6700
 F 0 "R18" H 5570 6746 50  0000 L CNN
-F 1 "R" H 5570 6655 50  0000 L CNN
+F 1 "10k" H 5570 6655 50  0000 L CNN
 F 2 "Resistor_SMD:R_0603_1608Metric" V 5430 6700 50  0001 C CNN
 F 3 "~" H 5500 6700 50  0001 C CNN
 	1    5500 6700
@@ -937,7 +912,7 @@ Connection ~ 5500 7100
 Wire Wire Line
 	5250 7000 5600 7000
 Text Notes 5750 6850 0    50   ~ 0
-Do not place \npullups and \nconnector\non PCB
+Do not place \nconnector\non PCB
 Wire Notes Line
 	4800 6150 6400 6150
 Wire Notes Line
@@ -1049,38 +1024,38 @@ Test0
 Text HLabel 6050 3400 2    50   BiDi ~ 0
 Test1
 Wire Wire Line
-	6250 4300 7150 4300
+	3700 4900 2800 4900
 Wire Wire Line
-	6500 4400 7300 4400
+	3450 5000 2650 5000
 $Comp
 L Device:R R21
 U 1 1 606C76CD
-P 7150 4100
-F 0 "R21" H 7220 4146 50  0000 L CNN
-F 1 "1k" H 7220 4055 50  0000 L CNN
-F 2 "Resistor_SMD:R_0603_1608Metric" V 7080 4100 50  0001 C CNN
-F 3 "~" H 7150 4100 50  0001 C CNN
-	1    7150 4100
-	1    0    0    -1  
+P 2800 4700
+F 0 "R21" H 2870 4746 50  0000 L CNN
+F 1 "1k" H 2870 4655 50  0000 L CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 2730 4700 50  0001 C CNN
+F 3 "~" H 2800 4700 50  0001 C CNN
+	1    2800 4700
+	-1   0    0    -1  
 $EndComp
 $Comp
 L power:+3V3 #PWR057
 U 1 1 606C7E79
-P 7150 3900
-F 0 "#PWR057" H 7150 3750 50  0001 C CNN
-F 1 "+3V3" H 7165 4073 50  0000 C CNN
-F 2 "" H 7150 3900 50  0001 C CNN
-F 3 "" H 7150 3900 50  0001 C CNN
-	1    7150 3900
-	1    0    0    -1  
+P 2800 4500
+F 0 "#PWR057" H 2800 4350 50  0001 C CNN
+F 1 "+3V3" H 2815 4673 50  0000 C CNN
+F 2 "" H 2800 4500 50  0001 C CNN
+F 3 "" H 2800 4500 50  0001 C CNN
+	1    2800 4500
+	-1   0    0    -1  
 $EndComp
 Wire Wire Line
-	7150 4250 7150 4300
-Connection ~ 7150 4300
+	2800 4850 2800 4900
+Connection ~ 2800 4900
 Wire Wire Line
-	7150 4300 7300 4300
+	2800 4900 2650 4900
 Wire Wire Line
-	7150 3900 7150 3950
+	2800 4500 2800 4550
 $Comp
 L Device:R R16
 U 1 1 606DACC7
@@ -1206,18 +1181,6 @@ Wire Wire Line
 	9650 1400 9650 2500
 Wire Wire Line
 	9650 2500 9950 2500
-Wire Wire Line
-	3350 3000 4450 3000
-Wire Wire Line
-	3350 3400 4450 3400
-Wire Bus Line
-	3250 2550 3250 3300
-Wire Bus Line
-	3450 2400 3450 3400
-Wire Bus Line
-	3200 3650 3200 4200
-Wire Bus Line
-	6800 2700 6800 3900
 $Comp
 L Connector:TestPoint TP13
 U 1 1 60C600DB
@@ -1246,4 +1209,51 @@ $EndComp
 Connection ~ 4200 1400
 Wire Wire Line
 	4200 1400 3950 1400
+Wire Wire Line
+	4000 4900 4450 4900
+Wire Wire Line
+	3750 5000 4450 5000
+Wire Wire Line
+	6550 2000 6850 2000
+Wire Wire Line
+	8350 2000 8350 1950
+Connection ~ 6850 2000
+Wire Wire Line
+	6850 2000 7600 2000
+Connection ~ 7600 2000
+Wire Wire Line
+	7600 2000 8350 2000
+Wire Wire Line
+	5150 5800 5150 5450
+Text Notes 5200 2900 0    50   ~ 0
+X24/Y24
+Text Notes 5200 2800 0    50   ~ 0
+X23/Y23
+Text Notes 5200 2700 0    50   ~ 0
+X22/Y22
+Text Notes 5200 2600 0    50   ~ 0
+X21/Y21
+$Comp
+L MCU_Microchip_SAMD:ATSAMD51J19A-A U4
+U 1 1 60335973
+P 5150 3600
+F 0 "U4" H 5150 1711 50  0000 C CNN
+F 1 "ATSAMD51J19A-A" H 5150 1620 50  0000 C CNN
+F 2 "Package_QFP:TQFP-64_10x10mm_P0.5mm" H 5150 3600 50  0001 C CIN
+F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/60001507E.pdf" H 5150 3600 50  0001 C CNN
+	1    5150 3600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3350 3000 4450 3000
+Wire Wire Line
+	3350 3400 4450 3400
+Wire Bus Line
+	3250 2550 3250 3300
+Wire Bus Line
+	3450 2400 3450 3400
+Wire Bus Line
+	3200 3650 3200 4200
+Wire Bus Line
+	6800 2700 6800 3900
 $EndSCHEMATC
