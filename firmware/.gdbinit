@@ -17,3 +17,4 @@ monitor reset
 symbol /Users/todi/DevPort/firmware/build/firmware.elf
 load /Users/todi/DevPort/firmware/build/firmware.elf
 
+monitor reset

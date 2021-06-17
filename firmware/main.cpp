@@ -3,9 +3,11 @@
 #include <hal_init.h>
 
 #include "temperature.hpp"
+#include "usb_hub.hpp"
 
 #include "drivers/layout.hpp"
 #include "drivers/async_i2c.hpp"
+#include "drivers/usb_hub_gpios.hpp"
 
 #define CONF_XOSC0_FREQUENCY 12000000
 #define CONF_XOSC0_XTALEN 1
@@ -86,27 +88,36 @@ static void setup_sercom1()
     hri_mclk_set_APBAMASK_SERCOM1_bit(MCLK);
 }
 
+struct init
+{
+    init()
+    {
+        init_mcu();
+        setup_main_clock();
+        setup_sercom1();
+    }
+} init_cpu;
+
+usb_hub< i2c_sercom1, usb_hub_gpios > local_hub;
+
+//temperature< i2c_sercom1 > temp_sensor;
 
 extern "C" void main_entry()
 {
-    init_mcu();
-    setup_main_clock();
-    setup_sercom1();
-
-    temperature< i2c_sercom1 > temp_sensor;
-
     gpio_set_pin_direction( test0_pin, GPIO_DIRECTION_OUT );
     gpio_set_pin_level( test0_pin, false );
 
-    temp_sensor.start_read_temperature();
+//    temp_sensor.start_read_temperature();
     for ( ;; )
     {
+        while ( local_hub.handle_events() )
+            ;
         __WFI();
-        temp_sensor.handle_events();
+/*        temp_sensor.handle_events();
 
         if ( temp_sensor.new_temperature().has_value() )
         {
             temp_sensor.start_read_temperature();
-        }
+        }*/
     }
 }
