@@ -37,6 +37,9 @@ target_compile_options(drivers
         -DCONF_XOSC1_CONFIG=0
         -DCONF_GCLK_GENERATOR_0_CONFIG=0
         -DCONF_SERCOM_5_I2CM_ENABLE=1
+        -DCONF_USB_EP0_I_CACHE=64
+        -DCONF_USB_EP1_I_CACHE=64
+        -DCONF_USB_EP2_I_CACHE=64
 )
 
 target_link_libraries(drivers PUBLIC assert)

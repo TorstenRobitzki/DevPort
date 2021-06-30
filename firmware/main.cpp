@@ -187,28 +187,59 @@ struct init
 
 usb_hub< i2c_sercom1, usb_hub_gpios > local_hub;
 
+static std::uint8_t wellcome_message[] =
+    "++++++++++++++++++++++++++++++\r\n"
+    "+ your USB hub welcomes you! +\r\n"
+    "++++++++++++++++++++++++++++++\r\n";
+
+static bool message = false;
+
+static std::uint8_t input_buffer[ 1 ];
+
 struct cdc_callbacks : public usb_cdc< cdc_callbacks >
 {
+    void on_cdc_connected()
+    {
+        gpio_set_pin_level( test0_pin, false );
+
+        if ( !message )
+        {
+            message = true;
+            read_usb_cdc( input_buffer, sizeof( input_buffer ) );
+            write_usb_cdc( wellcome_message, sizeof( wellcome_message ) );
+        }
+    }
+
+    void on_cdc_disconnect()
+    {
+        gpio_set_pin_level( test0_pin, true );
+
+    }
+
+    void on_cdc_read( std::size_t size )
+    {
+        write_usb_cdc( input_buffer, size );
+        read_usb_cdc( input_buffer, sizeof( input_buffer ) );
+    }
+
+    void on_cdc_write( std::size_t size )
+    {
+        (void)size;
+    }
 
 } cdc;
-
 
 //temperature< i2c_sercom1 > temp_sensor;
 
 extern "C" void main_entry()
 {
-    // std::uint8_t buffer[ 5 ];
-    // cdc.read_usb_cdc( buffer, 5 );
-    // cdc.write_usb_cdc( buffer, 5 );
-
-    gpio_set_pin_direction( test0_pin, GPIO_DIRECTION_OUT );
-    gpio_set_pin_level( test0_pin, false );
 
 //    temp_sensor.start_read_temperature();
     for ( ;; )
     {
-        while ( local_hub.handle_events() )
+        while ( local_hub.handle_events() || cdc.handle_events() )
             ;
+
         __WFI();
 /*        temp_sensor.handle_events();
 
