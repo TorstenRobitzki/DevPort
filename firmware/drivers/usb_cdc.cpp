@@ -17,8 +17,6 @@ static uint8_t single_desc_bytes_hs[] = {
     CDCD_ACM_HS_DESCES_HS
 };
 
-#define CDCD_ECHO_BUF_SIZ CONF_USB_CDCD_ACM_DATA_BULKIN_MAXPKSZ_HS
-
 static struct usbd_descriptors single_desc[] = {
     {
         single_desc_bytes, single_desc_bytes + sizeof(single_desc_bytes)

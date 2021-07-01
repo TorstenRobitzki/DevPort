@@ -11,12 +11,15 @@ target_sources(drivers
         ${ASF_ROOT}/hpl/oscctrl/hpl_oscctrl.c
         ${ASF_ROOT}/hpl/mclk/hpl_mclk.c
         ${ASF_ROOT}/hpl/gclk/hpl_gclk.c
+        ${ASF_ROOT}/hpl/usb/hpl_usb.c
+        ${ASF_ROOT}/hpl/systick/hpl_systick.c
+        ${ASF_ROOT}/hpl/core/hpl_core_m4.c
         ${ASF_ROOT}/usb/class/cdc/device/cdcdf_acm.c
         ${ASF_ROOT}/usb/usb_protocol.c
+        ${ASF_ROOT}/usb/device/usbdc.c
         ${ASF_ROOT}/hal/src/hal_usb_device.c
         ${ASF_ROOT}/hal/src/hal_atomic.c
-        ${ASF_ROOT}/usb/device/usbdc.c
-        ${ASF_ROOT}/hpl/usb/hpl_usb.c
+        ${ASF_ROOT}/hal/src/hal_delay.c
         ${ASF_ROOT}/hal/utils/src/utils_list.c
 )
 
@@ -40,6 +43,7 @@ target_compile_options(drivers
         -DCONF_USB_EP0_I_CACHE=64
         -DCONF_USB_EP1_I_CACHE=64
         -DCONF_USB_EP2_I_CACHE=64
+        -DCONF_USBD_HS_SP=1
 )
 
 target_link_libraries(drivers PUBLIC assert)
@@ -54,6 +58,7 @@ target_include_directories(drivers
         ${ASF_ROOT}/hal/utils/include
         ${ASF_ROOT}/hpl/port
         ${ASF_ROOT}/hpl/gclk
+        ${ASF_ROOT}/hpl/core
         ${ASF_ROOT}/CMSIS/Core/include
         ${ASF_ROOT}/hri
         ${ASF_ROOT}/usb/class/cdc/device

@@ -1,6 +1,7 @@
 #include <sam.h>
 #include <hal_gpio.h>
 #include <hal_init.h>
+#include <hal_delay.h>
 
 #include "temperature.hpp"
 #include "usb_hub.hpp"
@@ -179,9 +180,16 @@ struct init
     init()
     {
         init_mcu();
+
         setup_main_clock();
+
+        delay_init(SysTick);
+
         setup_sercom1();
         setup_usb();
+
+        gpio_set_pin_direction( test0_pin, GPIO_DIRECTION_OUT );
+        gpio_set_pin_level( test0_pin, true );
     }
 } init_cpu;
 
@@ -192,7 +200,7 @@ static std::uint8_t wellcome_message[] =
     "+ your USB hub welcomes you! +\r\n"
     "++++++++++++++++++++++++++++++\r\n";
 
-static bool message = false;
+static bool require_read = true;
 
 static std::uint8_t input_buffer[ 1 ];
 
@@ -200,20 +208,20 @@ struct cdc_callbacks : public usb_cdc< cdc_callbacks >
 {
     void on_cdc_connected()
     {
+        delay_ms( 100 );
         gpio_set_pin_level( test0_pin, false );
+        write_usb_cdc( wellcome_message, sizeof( wellcome_message ) );
 
-        if ( !message )
+        if ( require_read )
         {
-            message = true;
+            require_read = false;
             read_usb_cdc( input_buffer, sizeof( input_buffer ) );
-            write_usb_cdc( wellcome_message, sizeof( wellcome_message ) );
         }
     }
 
     void on_cdc_disconnect()
     {
         gpio_set_pin_level( test0_pin, true );
-
     }
 
     void on_cdc_read( std::size_t size )
